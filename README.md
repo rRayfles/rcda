@@ -1,1 +1,684 @@
-# rcda
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11 Months of Us nyehehe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffffff 0%, #fff5f7 50%, #ffe4ec 100%);
+            font-family: 'VT323', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+            color: #ff1493;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            color: #ffb6c1;
+            text-shadow: 3px 3px 0px #ffc0cb, 0 0 15px rgba(255, 182, 193, 0.5);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: #ff69b4;
+            text-shadow: 2px 2px 0px #ffc0cb;
+        }
+
+        .room {
+            background: linear-gradient(to bottom, #ffffff 0%, #fff5f7 100%);
+            border: 4px solid #ffc0cb;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 182, 193, 0.3), inset 0 0 50px rgba(255, 240, 243, 0.8);
+            min-height: 400px;
+            overflow: hidden;
+        }
+
+        .room-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            color: #ff1493;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .pixel-scene {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .clickable-item {
+            background: linear-gradient(135deg, #ffffff 0%, #ffe4ec 100%);
+            border: 3px solid #ffb6c1;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clickable-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: #ffb6c1;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe4ec 100%);
+        }
+
+        .clickable-item.clicked {
+            opacity: 0.6;
+            border-color: #90EE90;
+            animation: pulse 2s infinite;
+        }
+
+        .pixel-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5));
+        }
+
+        .item-label {
+            font-size: 20px;
+            color: #ff1493;
+            font-weight: bold;
+        }
+
+        .message-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ffffff 0%, #fff5f7 100%);
+            border: 4px solid #ffc0cb;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            z-index: 1000;
+            box-shadow: 0 0 50px rgba(255, 182, 193, 0.6);
+            animation: popIn 0.3s ease;
+        }
+
+        .message-popup.active {
+            display: block;
+        }
+
+        .popup-header {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #ffb6c1;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .popup-content {
+            font-size: 22px;
+            line-height: 1.6;
+            color: #ff1493;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .popup-cat {
+            font-size: 60px;
+            text-align: center;
+            margin: 15px 0;
+            animation: bounce 1s infinite;
+        }
+
+        .close-btn {
+            background: #ff69b4;
+            color: #ffffff;
+            border: none;
+            padding: 12px 30px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 #ff1493;
+        }
+
+        .close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #ff1493;
+        }
+
+        .close-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #ff1493;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 182, 193, 0.4);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .spotify-section {
+            background: linear-gradient(135deg, #ffffff 0%, #ffe4ec 100%);
+            border: 4px solid #1DB954;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.3);
+        }
+
+        .spotify-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #1DB954;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: #ffffff;
+            border: 2px solid #ffb6c1;
+            border-radius: 10px;
+            height: 30px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ff69b4, #ffb6c1, #ff69b4);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 20px;
+            color: #ff1493;
+            margin-top: 10px;
+        }
+
+        .final-message {
+            display: none;
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffe4ec 100%);
+            color: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 30px;
+            animation: glow 2s ease-in-out infinite alternate;
+            border: 4px solid #fff;
+        }
+
+        .final-message.active {
+            display: block;
+        }
+
+        .final-message h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .final-message p {
+            font-size: 24px;
+            line-height: 1.6;
+        }
+
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 24px;
+            animation: floatUp 4s ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 20px #ffb6c1, 0 0 40px #ffc0cb; }
+            to { box-shadow: 0 0 30px #ffb6c1, 0 0 60px #ffc0cb, 0 0 80px #ff69b4; }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .month-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(45, 27, 78, 0.9);
+            border: 3px solid #ffb6c1;
+            border-radius: 15px;
+            padding: 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: #ffb6c1;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(255, 182, 193, 0.4);
+        }
+
+        .intro-text {
+            text-align: center;
+            font-size: 24px;
+            color: #ff69b4;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(45, 27, 78, 0.5);
+            border-radius: 15px;
+            border: 2px dashed #ffc0cb;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 18px; }
+            .pixel-scene { grid-template-columns: repeat(2, 1fr); }
+            .room { padding: 15px; }
+            .month-counter { font-size: 10px; padding: 10px; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="hearts-container" id="hearts"></div>
+    
+    <div class="month-counter">
+        💜 Month <span id="currentMonth">0</span>/11
+    </div>
+
+    <div class="game-container">
+        <div class="header">
+            <h1>11 MONTHS OF US</h1>
+            <div class="subtitle">A Love Quest 💜🎮</div>
+        </div>
+
+        <div class="intro-text">
+            Welcome to our little world! Click on items to unlock messages from my heart to yours. Collect all 11 memories! 🐱✨
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">0/11 Memories Collected</div>
+
+        <!-- Room 1: Our Virtual Bedroom -->
+        <div class="room">
+            <div class="room-title">🏠 Our Cozy Corner</div>
+            <div class="pixel-scene">
+                <div class="clickable-item" onclick="openMessage(0)">
+                    <div class="pixel-icon">💻</div>
+                    <div class="item-label">Awkward Silence</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(1)">
+                    <div class="pixel-icon">🐱</div>
+                    <div class="item-label">Fayr</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(2)">
+                    <div class="pixel-icon">🎮</div>
+                    <div class="item-label">Gaming Together</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(3)">
+                    <div class="pixel-icon">☕</div>
+                    <div class="item-label">Morning Texts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room 2: The Garden of Growth -->
+        <div class="room">
+            <div class="room-title">🌸 Garden of Us</div>
+            <div class="pixel-scene">
+                <div class="clickable-item" onclick="openMessage(4)">
+                    <div class="pixel-icon">🌱</div>
+                    <div class="item-label">Growing Together</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(5)">
+                    <div class="pixel-icon">🌙</div>
+                    <div class="item-label">Same Moon</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(6)">
+                    <div class="pixel-icon">💌</div>
+                    <div class="item-label">Love Letters</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(7)">
+                    <div class="pixel-icon">🔮</div>
+                    <div class="item-label">Our Future</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room 3: The Café of Feelings -->
+        <div class="room">
+            <div class="room-title">☕ The Feelings Café</div>
+            <div class="pixel-scene">
+                <div class="clickable-item" onclick="openMessage(8)">
+                    <div class="pixel-icon">🥺</div>
+                    <div class="item-label">Proud of You</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(9)">
+                    <div class="pixel-icon">🤗</div>
+                    <div class="item-label">Miss You</div>
+                </div>
+                <div class="clickable-item" onclick="openMessage(10)">
+                    <div class="pixel-icon">💖</div>
+                    <div class="item-label">Forever</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spotify Playlist -->
+        <div class="spotify-section">
+            <div class="spotify-title">🎵 Our Soundtrack</div>
+            <p style="font-size: 20px; color: #ff69b4; margin-bottom: 15px;">Songs that remind me of you 💜</p>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0DUcb8TWXRWVH5NziZBjbc?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+
+        <!-- Final Message -->
+        <div class="final-message" id="finalMessage">
+            <h2>🎉 YOU COLLECTED ALL 11 MEMORIES! 🎉</h2>
+            <p>
+                My love,<br><br>
+                11 months ago, I found someone who makes my heart do the pixelated bounce animation. 
+                Even though we're miles apart and haven't met yet, you've become my favorite notification, 
+                my "good morning" sunshine, and my "goodnight" moon.<br><br>
+                Every msgs u sent, every call we have, every "I miss you" - it allll means everything to me. 
+                I can't wait for the day I get to hold your hand irl instead of just sending gifs and stickers:') .<br><br>
+                Thank you for being my player 2 in this game called life !!
+                Here's to level 12 and beyond! 💜<br><br>
+                I love you more than cats love knocking things off tables.<br>
+                Forever yours,<br>
+                [Lexis wohoooo]
+            </p>
+            <div style="font-size: 80px; margin-top: 20px;">🐱💜🎮</div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeMessage()"></div>
+    
+    <div class="message-popup" id="popup">
+        <div class="popup-header" id="popupHeader">Memory Unlocked!</div>
+        <div class="popup-cat" id="popupCat">🐱</div>
+        <div class="popup-content" id="popupContent"></div>
+        <button class="close-btn" onclick="closeMessage()">💜 Collect</button>
+    </div>
+
+    <script>
+        // Messages data - 11 months of love
+        const messages = [
+            {
+                title: "Month 1: Awkward Silence",
+                cat: "😺",
+                text: "Okay real talk - those first calls were ROUGH. I was sweating, overthinking every word, and probably said 'uhhh' like 47 times.. haha,, thanks for not ghosting my awkward ass twin......"
+            },
+            {
+                title: "Month 2: Fayr",
+                cat: "😸",
+                text: "arhggggg i'm trying to rememberrrr!!! But yes april was fire cuh you kept sending pics of your fur babies mwuhehehehe they're so cute twin pero mas cute ka parin heh"
+            },
+            {
+                title: "Month 3: Gaming Together",
+                cat: "🎮",
+                text: "Even when we lose every match and get scared sa rbx horror games, I still have the best time because I'm with you. You're the only teammate I want, even when you accidentally kill or scare me (I forgive you... mostly). Thanks for being my Player 2. 👾"
+            },
+            {
+                title: "Month 4: Morning Texts",
+                cat: "🌅",
+                text: "Waking up to your 'good morning' texts is literally the best part of my day. It's like someone injected sunshine directly into my phone HAHAHHAAHHHAHHAHA you're lit my milk before my milk (it makes sense for me)"
+            },
+            {
+                title: "Month 5: Growing Together",
+                cat: "🌱",
+                text: "watching you grow and achieve things makes me the proudest partner ever. Every small win you share, I celebrate like it's a boss battle victory. im always cheering for you, Ji!!"
+            },
+            {
+                title: "Month 6: Same Moon",
+                cat: "🌙",
+                text: "Sometimes i look at the moon and think 'We're looking at the same sky.' It makes the distance feel smaller"
+            },
+            {
+                title: "Month 7: Love Letters",
+                cat: "💌",
+                text: "I know i(sometimes when 'di ako nahihiya) send you paragraphs that could be novels, but that's because you give me infinite things to love. Every word is true, every emoji is carefully selected, and every 'I love you' comes from the deepest part of my heart like literally"
+            },
+            {
+                title: "Month 8: Our Future",
+                cat: "🔮",
+                text: "Im growing my 6th kidney stone. Lets keep growing together through the thick and thin, okay? :DD"
+            },
+            {
+                title: "Month 9: Proud of You",
+                cat: "🥺",
+                text: "I'm genuinely so proud of who you are. The way you handle bad days, the way you care for others, the way you make me feel safe and loved from thousands of miles away. You're incredible and im hella lucky!"
+            },
+            {
+                title: "Month 10: Miss You",
+                cat: "🤗",
+                text: "I miss you in ways I didn't know were possible. I miss your laugh, your voice, your everything. but yknow what????? missing you just proves how much i love you. Distance means so little when someone means so much heh"
+            },
+            {
+                title: "Month 11: Forever",
+                cat: "💖",
+                text: "11 months down, forever to go. You're not just my girlfriend, you're my best friend, my safe space, my favorite notification, and my future. I love you more than yesterday, but not as much as tomorrow :)"
+            }
+        ];
+
+        let collectedItems = new Set();
+        const totalItems = 11;
+
+        // Initialize stars background
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Create floating hearts
+        function createHeart() {
+            const heartsContainer = document.getElementById('hearts');
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = ['💜', '💖', '💕', '🩷'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+            heartsContainer.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        setInterval(createHeart, 1000);
+
+        function openMessage(index) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const message = messages[index];
+            
+            document.getElementById('popupHeader').textContent = message.title;
+            document.getElementById('popupCat').textContent = message.cat;
+            document.getElementById('popupContent').textContent = message.text;
+            
+            popup.classList.add('active');
+            overlay.classList.add('active');
+            
+            // Mark as collected
+            if (!collectedItems.has(index)) {
+                collectedItems.add(index);
+                updateProgress();
+                
+                // Visual feedback on the clicked item
+                const items = document.querySelectorAll('.clickable-item');
+                let count = 0;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].onclick && items[i].onclick.toString().includes(`openMessage(${index})`)) {
+                        items[i].classList.add('clicked');
+                        break;
+                    }
+                }
+            }
+            
+            // Create extra hearts
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createHeart, i * 200);
+            }
+        }
+
+        function closeMessage() {
+            document.getElementById('popup').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function updateProgress() {
+            const progress = (collectedItems.size / totalItems) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${collectedItems.size}/${totalItems} Memories Collected`;
+            document.getElementById('currentMonth').textContent = collectedItems.size;
+            
+            if (collectedItems.size === totalItems) {
+                setTimeout(() => {
+                    document.getElementById('finalMessage').classList.add('active');
+                    document.getElementById('finalMessage').scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Celebration hearts
+                    for (let i = 0; i < 20; i++) {
+                        setTimeout(createHeart, i * 100);
+                    }
+                }, 500);
+            }
+        }
+
+        // Initialize
+        createStars();
+
+        // Add keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMessage();
+        });
+    </script>
+</body>
+</html>
